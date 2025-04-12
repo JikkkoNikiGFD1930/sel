@@ -20,17 +20,14 @@ jobs:
       run: |
         pip install selenium
 
-    - name: Install Google Chrome
+    - name: Install Chrome 122
       run: |
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt install -y ./google-chrome-stable_current_amd64.deb
+        wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_122.0.6261.111-1_amd64.deb
+        sudo apt install -y ./google-chrome-stable_122.0.6261.111-1_amd64.deb
 
-    - name: Install ChromeDriver (matching Chrome version)
+    - name: Install ChromeDriver 122
       run: |
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
-        CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d '.' -f 1)
-        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION}")
-        wget -N "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+        wget https://chromedriver.storage.googleapis.com/122.0.6261.111/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         chmod +x chromedriver
         sudo mv -f chromedriver /usr/local/bin/chromedriver
