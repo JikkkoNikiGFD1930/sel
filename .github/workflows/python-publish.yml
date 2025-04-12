@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  selenium-job:
+  screenshot:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repo
       uses: actions/checkout@v3
 
     - name: Set up Python
@@ -19,30 +19,17 @@ jobs:
     - name: Install dependencies
       run: |
         pip install selenium
+        sudo apt-get update
+        sudo apt-get install -y chromium-chromedriver
+        sudo cp /usr/lib/chromium-browser/chromedriver /usr/bin
 
-    - name: Install Chrome 122 via apt pinning
-      run: |
-        sudo apt update
-        sudo apt install -y gnupg ca-certificates curl
-        curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-linux-signing-keyring.gpg
-        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-        sudo apt update
-        apt-cache madison google-chrome-stable
-        sudo apt install -y google-chrome-stable=122.0.6261.111-1
-
-    - name: Install ChromeDriver 122
-      run: |
-        wget https://chromedriver.storage.googleapis.com/122.0.6261.111/chromedriver_linux64.zip
-        unzip chromedriver_linux64.zip
-        chmod +x chromedriver
-        sudo mv -f chromedriver /usr/local/bin/chromedriver
-
-
-    - name: Run Selenium script
+    - name: Take screenshot
       run: python selenium_test.py
 
-    - name: Upload screenshot
-      uses: actions/upload-artifact@v4
-      with:
-        name: website-screenshot
-        path: screenshot.png
+    - name: Commit screenshot to repo
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add screenshot.png
+        git commit -m "Add screenshot"
+        git push
