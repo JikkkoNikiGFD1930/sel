@@ -20,10 +20,15 @@ jobs:
       run: |
         pip install selenium
 
-    - name: Install Chrome 122
+    - name: Install Chrome 122 via apt pinning
       run: |
-        wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_122.0.6261.111-1_amd64.deb
-        sudo apt install -y ./google-chrome-stable_122.0.6261.111-1_amd64.deb
+        sudo apt update
+        sudo apt install -y gnupg ca-certificates curl
+        curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-linux-signing-keyring.gpg
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt update
+        apt-cache madison google-chrome-stable
+        sudo apt install -y google-chrome-stable=122.0.6261.111-1
 
     - name: Install ChromeDriver 122
       run: |
@@ -31,6 +36,7 @@ jobs:
         unzip chromedriver_linux64.zip
         chmod +x chromedriver
         sudo mv -f chromedriver /usr/local/bin/chromedriver
+
 
     - name: Run Selenium script
       run: python selenium_test.py
