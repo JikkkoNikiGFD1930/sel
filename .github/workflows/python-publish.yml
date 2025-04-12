@@ -39,9 +39,3 @@ jobs:
 
     - name: Run Selenium script
       run: python selenium_test.py
-
-    - name: Upload screenshot
-      uses: actions/upload-artifact@v3
-      with:
-        name: website-screenshot
-        path: screenshot.png
